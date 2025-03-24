@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expandable Boxes</title>
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+        body {
+            font-family: Oswald;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+            background-image: url('https://cdn1.vectorstock.com/i/1000x1000/43/40/blue-seamless-pattern-with-school-outline-vector-26234340.jpg');
+            z-index: 0;
+        }
+        h2 {
+            font-family: Oswald;
+            text-align: center;
+            display: block;
+            float: none;
+            color: #2E5077;
+            background: #F6F4F0;
+            border-radius: 25px;
+            left: 50%;
+            width: 45%;
+
+        }
+        .dropdown {
+            position: relative;
+            width: 100%;
+            text-align: center;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+            white-space: nowrap;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .logo {
+            width: 100%;
+            background: #205781;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+        header {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        header a {
+            color: black;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        header a:hover {
+            color: #04AA6D;
+        }
+        .section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px 0;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        .box {
+            background: rgba(170, 170, 170, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            min-height: 200px;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            flex-direction: column;
+        }
+        .box video {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
+        .box .expanded-content {
+            display: none;
+            width: 100%;
+            position: relative;
+        }
+        .box.expanded {
+            grid-column: span 2;
+            min-height: 300px;
+            width: 100%;
+        }
+        .box.expanded video {
+            display: block;
+        }
+        .box.expanded .expanded-content {
+            display: block;
+        }
+        .button-img {
+            width: 100px; /* Increased width */
+            height:100px; /* Increased height */
+            cursor: pointer;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: none;
+            z-index: 1;
+        }
+        .box.expanded .button-img {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dropdown">
+        <div class="logo">LOGO PICTURE</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sections = {  // EDITED: Ensured all sections from original code are included.
+                "Science": [
+                    { title: "Physics Basics", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Learn about physics.", link: "Proto.html" },
+                    { title: "Chemistry Experiments", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Fun chemistry reactions.", link: "" }
+                ],
+                "Math": [
+                    { title: "Algebra Essentials", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Master algebra.", link: "https://example.com/algebra" },
+                    { title: "Geometry Principles", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Understand geometry.", link: "https://example.com/geometry" }
+                ],
+                "History": [
+                    { title: "Ancient Civilizations", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Explore history.", link: "https://example.com/history" },
+                    { title: "World War II", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Learn about WWII.", link: "https://example.com/ww2" }
+                ],
+                "Technology": [
+                    { title: "AI Basics", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Understand AI.", link: "https://example.com/ai" },
+                    { title: "Cybersecurity", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Learn about security.", link: "https://example.com/cybersecurity" }
+                ],
+                "Engineering": [
+                    { title: "Mechanical Engineering", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Explore mechanics.", link: "https://example.com/mechanical" },
+                    { title: "Electrical Circuits", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Learn circuits.", link: "https://example.com/circuits" }
+                ],
+                "Art": [
+                    { title: "Painting Techniques", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Learn to paint.", link: "https://example.com/painting" },
+                    { title: "Sculpting 101", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Basics of sculpting.", link: "https://example.com/sculpting" }
+                ],
+                "Literature": [
+                    { title: "Classic Novels", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Read classics.", link: "https://example.com/classicnovels" },
+                    { title: "Poetry Analysis", video: "https://www.w3schools.com/html/mov_bbb.mp4", description: "Understand poetry.", link: "https://example.com/poetry" }
+                ]
+            };
+
+            for (const section in sections) {
+                const sectionDiv = document.createElement("div");
+                sectionDiv.classList.add("section");
+                sectionDiv.id = section;
+                sectionDiv.innerHTML = `
+                    <h2>${section}</h2>
+                    <div class="grid">
+                        ${sections[section].map(item => `
+                        <div class="box" onclick="toggleBox(this)">
+                            <video src="${item.video}" muted loop></video>
+                            <div class="box-content">
+                                <span>${item.title}</span>
+                            </div>
+                            <div class="expanded-content">
+                                <span>${item.description}</span>
+                                <img src="https://static.vecteezy.com/system/resources/previews/008/506/351/non_2x/pixel-art-play-button-free-png.png" 
+                                    class="button-img" onclick="buttonAction(event, '${item.link}')" alt="Button" />
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                document.body.appendChild(sectionDiv);
+            }
+        });
+
+        function toggleBox(element) {  // EDITED: Fixed logic for expanding/collapsing boxes.
+            const isExpanded = element.classList.contains("expanded");
+            document.querySelectorAll(".box").forEach(box => {
+                box.classList.remove("expanded");
+                box.querySelector("video").pause();
+                box.querySelector("video").style.display = "none";
+                box.querySelector(".expanded-content").style.display = "none";
+            });
+            if (!isExpanded) {
+                element.classList.add("expanded");
+                element.querySelector("video").style.display = "block";
+                element.querySelector("video").play();
+                element.querySelector(".expanded-content").style.display = "flex";
+            }
+        }
+
+        function buttonAction(event, url) {  // EDITED: Added check to prevent navigation to empty links.
+            event.stopPropagation();
+            if (url) {
+                window.location.href = url;
+            }
+        }
+    </script>
+</body>
+</html>
